@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AsyncAwait
@@ -45,12 +43,46 @@ namespace AsyncAwait
         {
             using (var stream = File.AppendText(file))
             {
-                var html = await new WebClient().DownloadStringTaskAsync(linkUrl);
+                Task<string> t = new WebClient().DownloadStringTaskAsync(linkUrl);
+                string h = t.Result;
+                stream.Write(h);
+
+                string html = await new WebClient().DownloadStringTaskAsync(linkUrl);
                 stream.Write(html);
             }
 
             //метод DownloadStringTaskAsync создает задачу Task и сразу возвращает ее из функции
             //, в то время как в фоновом потоке начинает скачиваться страница с запрошенного url
         }
+
+
+
+        public static void Starter()
+        {
+            Console.WriteLine("Starter started at {0}", DateTime.Now);
+            DoLongAsync();
+            Console.WriteLine("Starter finished at {0}", DateTime.Now);
+        }
+
+        public static async void DoLongAsync()
+        {
+            Console.WriteLine("DoLongAsync started at {0}", DateTime.Now);
+
+            string res = await DoLongWork();
+
+            Console.WriteLine("DoLongAsync finished at {0}", DateTime.Now);
+        }
+
+        public static Task<string> DoLongWork()
+        {
+            return Task.Run<string>(() => {
+                Console.WriteLine("Worker started at {0}", DateTime.Now);
+                Thread.Sleep(1000);
+                Console.WriteLine("Worker finished at {0}", DateTime.Now);
+                return "done";
+            });
+   
+        }
+
     }
 }
