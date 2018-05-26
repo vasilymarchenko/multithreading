@@ -32,6 +32,15 @@ namespace AsyncAwait
                 });
         }
 
+        /// <summary>
+        /// Маркер async может применяться к методу, который возвращает Task<T> или void.
+        /// Применять маркер к методу нужно, когда в теле метода происходит 
+        /// комбинация других асинхронных вызовов (используется оператор await) 
+        /// или когда метод определяет асинхронную операцию
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="linkUrl"></param>
+        /// <returns></returns>
         static async Task SavePage(string file, string linkUrl)
         {
             using (var stream = File.AppendText(file))
@@ -39,6 +48,9 @@ namespace AsyncAwait
                 var html = await new WebClient().DownloadStringTaskAsync(linkUrl);
                 stream.Write(html);
             }
+
+            //метод DownloadStringTaskAsync создает задачу Task и сразу возвращает ее из функции
+            //, в то время как в фоновом потоке начинает скачиваться страница с запрошенного url
         }
     }
 }
