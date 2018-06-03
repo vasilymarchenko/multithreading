@@ -8,7 +8,6 @@ namespace AsyncAwait
 {
     public class ServiceDemo
     {
-
         static Task SavePage1(string file, string linkUrl)
         {
             var stream = File.AppendText(file);
@@ -59,14 +58,14 @@ namespace AsyncAwait
 
         public static void Starter()
         {
-            Console.WriteLine("Starter started at {0}", DateTime.Now);
+            Console.WriteLine("Starter started at {0}, ThreadId={1}", DateTime.Now, Thread.CurrentThread.ManagedThreadId);
             DoLongAsync();
             Console.WriteLine("Starter finished at {0}", DateTime.Now);
         }
 
         public static async void DoLongAsync()
         {
-            Console.WriteLine("DoLongAsync started at {0}", DateTime.Now);
+            Console.WriteLine("DoLongAsync started at {0}, ThreadId ={1}", DateTime.Now, Thread.CurrentThread.ManagedThreadId);
 
             string res = await DoLongWork();
 
@@ -76,8 +75,12 @@ namespace AsyncAwait
         public static Task<string> DoLongWork()
         {
             return Task.Run<string>(() => {
-                Console.WriteLine("Worker started at {0}", DateTime.Now);
-                Thread.Sleep(1000);
+                Console.WriteLine("Worker started at {0}, ThreadId={1}", DateTime.Now, Thread.CurrentThread.ManagedThreadId);
+                for (int i = 0; i < 1000; i++)
+                {
+                    Thread.Sleep(2);
+                }
+                
                 Console.WriteLine("Worker finished at {0}", DateTime.Now);
                 return "done";
             });

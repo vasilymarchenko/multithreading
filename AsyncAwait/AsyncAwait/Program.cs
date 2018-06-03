@@ -10,6 +10,10 @@ namespace AsyncAwait
     {
         static void Main(string[] args)
         {
+            //ServiceDemo.Starter();
+            ServiceDemo.DoLongAsync();
+
+            Console.ReadLine();
         }
     }
 }
